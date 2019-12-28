@@ -22,6 +22,10 @@ mongoose.connect("mongodb+srv://SZ:topcoder@cluster0-s8cue.mongodb.net/test?retr
 	console.log('ERROR', err.message);
 });
 
+app.use(session({
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
