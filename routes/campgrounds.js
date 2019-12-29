@@ -3,7 +3,8 @@ var router  	 = express.Router();
 var Campground 	 = require("../models/campground");
 var middleware   = require("../middleware/index.js");
 var nodeGeocoder = require("node-geocoder");
-var multer = require('multer');
+var multer       = require("multer");
+var request      = require("request");
 var storage = multer.diskStorage({
 	filename: function(req, file, callback) {
     	callback(null, Date.now() + file.originalname);
@@ -94,14 +95,40 @@ router.get("/new", middleware.isLoggedIn, function(req, res) {
 
 // SHOW show more info about one campground
 router.get("/:id", function(req,res) {
+	var Info = {};
 	Campground.findById(req.params.id).populate("comments likes").exec(function(err, foundCampground){
 		if(err || !foundCampground) {
 			console.log(err);
 			req.flash("error", "Sorry, campground not found");
 			res.redirect("/campgrounds");
 		} else {
-			//console.log(foundCampground);
-			res.render("campgrounds/show", {campground: foundCampground});
+			var url1 = "http://api.openweathermap.org/data/2.5/weather?lat="
+				+ foundCampground.lat +"&lon="+ foundCampground.lng+"&appid="+ process.env.WEATHER_APPID;
+			request(url1, function (err, response, body) {
+				if(err){
+					res.redirect("back");
+				} else {
+					var weather = JSON.parse(body)
+					Info["weather"] = weather["weather"][0]["description"];
+					tempMin = (weather["main"]["temp_min"]-273)*1.8 + 32;
+					tempMax = (weather["main"]["temp_max"]-273)*1.8 + 32;
+					Info["temp_min"] = tempMin.toFixed(2);
+					Info["temp_max"] = tempMax.toFixed(2);
+					var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ foundCampground.lat + 
+						"," + foundCampground.lng + "&key=" + process.env.GEOCODER_API_KEY;
+					request(url, function (err, response, body) {
+						if(err){
+							res.redirect("back");
+						} else {
+							var address = JSON.parse(body)
+							//console.log(address);
+							Info["address"] = address["results"][0]["formatted_address"];
+							//console.log(Info);
+							res.render("campgrounds/show", {campground: foundCampground, Info: Info});
+						}
+					});
+  				}
+			});
 		}
 	});
 });
@@ -200,5 +227,37 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req,res){
 		}
 	});
 });
+
+function findAddress(lat, lng, Info) {
+	var latlng = lat + "," + lng;
+	var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ latlng + "&key=" + process.env.GEOCODER_API_KEY;
+	request(url, function (err, response, body) {
+    	if(err){
+      	res.redirect("back");
+    	} else {
+			var info = JSON.parse(body)
+      		console.log(info["results"][0]);
+			Info["address"] = info["results"][0]["formattedAddress"];
+			return Info;
+  		}
+	});
+}
+
+function findWeather(lat, lng, Info) {
+	var url = "http://api.openweathermap.org/data/2.5/weather?lat="+ lat +"&lon="+lng+"&appid="+ process.env.WEATHER_APPID;
+	request(url, function (err, response, body) {
+    	if(err){
+      	res.redirect("back");
+    	} else {
+			var weather = JSON.parse(body)
+      		console.log(weather);
+			console.log(weather["weather"][0]["description"]);
+			console.log(weather["main"]["temp_min"]);
+			console.log(weather["main"]["temp_max"]);
+			Info["weather"] = weather["weather"][0]["description"];
+			return Info;
+  		}
+	});
+}
 
 module.exports = router;
