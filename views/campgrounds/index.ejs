@@ -3,11 +3,12 @@
 <div class = "container">
 	<header class = "jumbotron">
 		<div class = "container">
-			<h1>Welcome to YelpCamp</h1>
+			<h1><i class="fas fa-campground"></i>Welcome to YelpCamp</h1>
 			<p>View our hand-picked campgrounds from all-over the world</p>
 			
 			<p>
-				<a class = "btn btn-primary btn-lg" href = "/campgrounds/new">Add New Campground</a>
+				<a class = "btn btn-primary btn-lg" href = "/campgrounds/new">Add New Campground 
+					<i class="fas fa-plus-circle"></i></a>
 			</p>
 		</div>
 	</header>
@@ -25,7 +26,9 @@
 						</div>
 					</div>
 					<p>
-						<a href="/campgrounds/<%= campground._id %>" class = "btn btn-primary">More Info</a>
+						<a href="/campgrounds/<%= campground._id %>" class = "btn btn-primary"><i class="fas fa-info-circle"></i>
+
+More Info</a>
 					</p>
 				</div>
 			</div>
