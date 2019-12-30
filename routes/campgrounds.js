@@ -37,14 +37,30 @@ var geocoder = nodeGeocoder(options);
 
 // INDEX show all campgrounds
 router.get("/", function(req,res) {	
-	Campground.find({}, function(err,allCampgrounds){
-		if(err){
-			console.log(err);
-		} else {
-			res.render("campgrounds/index", 
-					   {campgrounds: allCampgrounds, currentUser: req.user, page: 'campgrounds'});
-		}
-	});
+	var noMatch = null;
+	if(req.query.search) {
+		const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+		Campground.find({name:regex}, function(err,allCampgrounds){
+			if(err){
+				console.log(err);
+			} else {
+				if(allCampgrounds.length<1) {
+					noMatch = "Sorry, no campgrounds match the query, please try again";
+				}
+				res.render("campgrounds/index", {campgrounds: allCampgrounds, 
+												 currentUser: req.user, page: 'campgrounds', noMatch: noMatch});
+			}
+		});
+	} else {
+		Campground.find({}, function(err,allCampgrounds){
+			if(err){
+				console.log(err);
+			} else {
+				res.render("campgrounds/index", {campgrounds: allCampgrounds, 
+												 currentUser: req.user, page: 'campgrounds', noMatch: noMatch});
+			}
+		});
+	}
 });
 
 // CREATE add new campground to the database
@@ -95,7 +111,6 @@ router.get("/new", middleware.isLoggedIn, function(req, res) {
 
 // SHOW show more info about one campground
 router.get("/:id", function(req,res) {
-	var Info = {};
 	Campground.findById(req.params.id).populate("comments likes").exec(function(err, foundCampground){
 		if(err || !foundCampground) {
 			console.log(err);
@@ -259,5 +274,10 @@ function findWeather(lat, lng, Info) {
   		}
 	});
 }
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 
 module.exports = router;
