@@ -111,6 +111,7 @@ router.get("/new", middleware.isLoggedIn, function(req, res) {
 
 // SHOW show more info about one campground
 router.get("/:id", function(req,res) {
+	var Info = {};
 	Campground.findById(req.params.id).populate("comments likes").exec(function(err, foundCampground){
 		if(err || !foundCampground) {
 			console.log(err);

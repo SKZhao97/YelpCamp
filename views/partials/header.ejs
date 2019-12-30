@@ -35,8 +35,8 @@
 						<li class="<%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>">
 							<a href="/register"><i class="fas fa-user-plus"></i> Sign Up</a></li>
 					<% } else { %>
-					<li><a href="#">Signed In As <%= currentUser.username %></a></li>
-					<li><a href="/logout">Logout</a></li>
+					<li><a href="#"><i class="fas fa-user-alt"></i> Signed In As <%= currentUser.username %></a></li>
+					<li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
 					<% } %>
 				</ul>
 			</div>
