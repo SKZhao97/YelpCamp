@@ -10,6 +10,17 @@
 	padding: 9px;
 }
 
+.jumb-image {
+	background-image: url("/images/jumboBackground.jpg");
+	background-repeat: no-repeat;
+  	background-size: cover;
+  	background-position: center;
+}
+
+.welcome {
+	font-size: 100%;
+	color:white;
+}
 .delete-form {
 	display:inline;
 }
@@ -26,4 +37,13 @@
 #map {
 	height: 400px;
 	width: 100%;
+}
+
+.footer {
+	text-align: center;
+}
+
+.icon {
+	display:inline;
+	margin: 0 10px;
 }
