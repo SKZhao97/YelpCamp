@@ -10,6 +10,7 @@ YelpCamp is a web application **sharing Campgrounds** with people all-over the w
 * Implemented “add, edit, delete, show, like” oprations of **Campgrounds** and **Comments**;
 * **Express.js** Structure;
 * Used **MongoDB** as Database, **MongoDB Atlas** was ingrained;
+* Used **Passport** package to implement **Authentication** and **Authorization** of Login/SignUp and Edit/Delete;
 * Used **Flash** to implement in-application **notification**
 * Used **Cloundinary** cloud-based services to store images and **Multer** package to upload image files;
 * Embedded **Google Map** in the campground page based on **Google Map API**, such as geocoder;
